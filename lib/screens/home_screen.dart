@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:Muvavi/models/movie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
@@ -18,12 +19,15 @@ class _HomeScreenState extends State<HomeScreen> {
   //
   String page = '1';
 
+  bool _isLoading = false;
+
+  List<Movie> movies = [];
+
   Future<List<Movie>> _getMovies(String pageNumber) async {
     var response = await http.get(url + pageNumber);
     var jsonData = jsonDecode(response.body);
     var items = jsonData['results'];
 
-    List<Movie> movies = [];
     //
     for (var u in items) {
       Movie movie = Movie(
@@ -35,13 +39,40 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     print(movies.length);
+
+    //
+    List<String> titles = [];
+    for (var movie in movies) {
+      titles.add(movie.title);
+    }
+    print(titles);
+
     return movies;
+  }
+
+  _loadMoreMovies() async {
+    _isLoading = true;
+    print('loadig more movies....');
+    setState(() {
+      page = (int.parse(page) + 1).toString();
+    });
+    List<Movie> moreMovies = await _getMovies((int.parse(page) + 1).toString());
+    setState(() {
+      page = (int.parse(page) + 1).toString();
+    });
+    print('done');
+    // List<Movie> allMovies = movies..addAll(moreMovies);
+    setState(() {
+      movies.followedBy(moreMovies);
+    });
+    print('loading done.');
+    // print(movies);
+    _isLoading = false;
   }
 
   @override
   void initState() {
     super.initState();
-    _getMovies(page);
   }
 
   _buildUi(AsyncSnapshot snapshot, int index) {
@@ -78,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20.0),
+                SizedBox(height: 5.0),
                 Text(
                   snapshot.data[index].title,
                   overflow: TextOverflow.clip,
@@ -110,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Container(
         child: FutureBuilder(
-          future: _getMovies(page),
+          future: _getMovies('1'),
           builder: (context, snapshot) {
             if (snapshot.data == null) {
               return Container(
@@ -119,24 +150,52 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             } else {
-              return ListView.builder(
-                physics: BouncingScrollPhysics(),
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return Padding(
-                      padding: EdgeInsets.only(left: 10.0, bottom: 20.0),
-                      child: Text(
-                        'Muvavi',
-                        style: TextStyle(
-                          fontSize: 40.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    );
+              return NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification scrollDetails) {
+                  if (!_isLoading &&
+                      scrollDetails.metrics.pixels ==
+                          scrollDetails.metrics.maxScrollExtent) {
+                    _loadMoreMovies();
                   }
-                  return _buildUi(snapshot, index - 1);
+                  return false;
                 },
+                child: ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 10.0, bottom: 5.0),
+                            child: Text(
+                              'Muvavi',
+                              style: TextStyle(
+                                fontSize: 40.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 10.0, bottom: 30.0),
+                            child: Row(
+                              children: [
+                                Text("Powered By "),
+                                SizedBox(width: 10.0),
+                                // SvgPicture.asset(
+                                //   'assets/images/tmdb.svg',
+                                //   height: 20,
+                                // ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    return _buildUi(snapshot, index - 1);
+                  },
+                ),
               );
             }
           },
