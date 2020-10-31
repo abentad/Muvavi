@@ -44,12 +44,70 @@ class _HomeScreenState extends State<HomeScreen> {
     _getMovies(page);
   }
 
+  _buildUi(AsyncSnapshot snapshot, int index) {
+    return Container(
+      margin: EdgeInsets.all(10.0),
+      height: MediaQuery.of(context).size.height / 4,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          bottomRight: Radius.circular(
+            20.0,
+          ),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            offset: Offset(1, 9),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Image(
+            fit: BoxFit.cover,
+            image: NetworkImage(
+              posterBaseUrl + snapshot.data[index].posterImage,
+            ),
+          ),
+          SizedBox(width: 20.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 20.0),
+                Text(
+                  snapshot.data[index].title,
+                  overflow: TextOverflow.clip,
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20.0),
+                Text(
+                  snapshot.data[index].overview.toString().length > 100
+                      ? snapshot.data[index].overview
+                              .toString()
+                              .substring(0, 100) +
+                          '...'
+                      : snapshot.data[index].overview,
+                  overflow: TextOverflow.clip,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Movies"),
-      ),
       body: Container(
         child: FutureBuilder(
           future: _getMovies(page),
@@ -65,21 +123,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 physics: BouncingScrollPhysics(),
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                    leading: Image(
-                      image: NetworkImage(
-                        posterBaseUrl + snapshot.data[index].posterImage,
+                  if (index == 0) {
+                    return Padding(
+                      padding: EdgeInsets.only(left: 10.0, bottom: 20.0),
+                      child: Text(
+                        'Muvavi',
+                        style: TextStyle(
+                          fontSize: 40.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    title: Text(
-                      snapshot.data[index].title,
-                    ),
-                    subtitle: Text(
-                      snapshot.data[index].overview,
-                    ),
-                  );
+                    );
+                  }
+                  return _buildUi(snapshot, index - 1);
                 },
               );
             }
