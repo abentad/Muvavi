@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:Muvavi/models/movie.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
@@ -22,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = false;
 
   List<Movie> movies = [];
+  List<Movie> toRemove = [];
 
   Future<List<Movie>> _getMovies(String pageNumber) async {
     var response = await http.get(url + pageNumber);
@@ -34,18 +34,22 @@ class _HomeScreenState extends State<HomeScreen> {
         title: u['original_title'],
         overview: u['overview'],
         posterImage: u['poster_path'],
+        id: u['id'],
       );
       movies.add(movie);
     }
 
+    //
     print(movies.length);
 
-    //
+    //this is just to print the titles
     List<String> titles = [];
     for (var movie in movies) {
       titles.add(movie.title);
     }
     print(titles);
+    //
+    //
 
     return movies;
   }
@@ -53,10 +57,13 @@ class _HomeScreenState extends State<HomeScreen> {
   _loadMoreMovies() async {
     _isLoading = true;
     print('loadig more movies....');
+    //
     setState(() {
       page = (int.parse(page) + 1).toString();
     });
+    //
     List<Movie> moreMovies = await _getMovies((int.parse(page) + 1).toString());
+    //
     setState(() {
       page = (int.parse(page) + 1).toString();
     });
