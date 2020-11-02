@@ -1,7 +1,6 @@
 import 'package:Muvavi/models/movie.dart';
 import 'package:Muvavi/screens/details_screen.dart';
 import 'package:Muvavi/widgets/my_container.dart';
-import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -140,7 +139,7 @@ class UiHelper {
                   title: movieList[index].title,
                   voteAverage: movieList[index].voteAverage,
                   releaseDate: movieList[index].releaseDate,
-                  // heroTagid: herotag,
+                  movieId: movieList[index].id,
                 ),
               ),
             );
