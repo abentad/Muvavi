@@ -11,10 +11,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   cupertino_icons: ^1.0.0
-  http: ^0.12.2
   flutter_svg: ^0.19.1
+  google_fonts: ^1.1.1
+  http: ^0.12.2
 
 dev_dependencies:
   flutter_test:
@@ -23,6 +23,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
