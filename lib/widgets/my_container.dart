@@ -1,36 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class MyContainer extends StatelessWidget {
+class MyContainer extends StatefulWidget {
   final String imagePath;
   final String title;
   final String voteAverage;
   final String releaseDate;
+  final List<int> genres;
 
-  MyContainer({this.imagePath, this.title, this.voteAverage, this.releaseDate});
+  MyContainer(
+      {this.imagePath,
+      this.title,
+      this.voteAverage,
+      this.releaseDate,
+      this.genres});
+
+  @override
+  _MyContainerState createState() => _MyContainerState();
+}
+
+class _MyContainerState extends State<MyContainer> {
+  bool isFavorite = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 400.0,
       width: double.infinity,
       decoration: BoxDecoration(
-        // color: Colors.red,
         image: DecorationImage(
-          image: NetworkImage(imagePath),
+          image: NetworkImage(widget.imagePath),
           fit: BoxFit.fill,
         ),
-
         borderRadius: BorderRadius.circular(20.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey[400],
-            blurRadius: 20.0,
-            spreadRadius: 10.0,
-            offset: Offset(3, 9),
-          ),
-        ],
       ),
       child: Container(
+        height: 400.0,
+        width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.0),
           gradient: LinearGradient(
@@ -54,12 +60,12 @@ class MyContainer extends StatelessWidget {
                     height: 45.0,
                     width: 45.0,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.white.withOpacity(0.8),
                       borderRadius: BorderRadius.circular(50.0),
                     ),
                     child: Center(
                       child: Text(
-                        voteAverage,
+                        widget.voteAverage,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.0,
@@ -67,17 +73,30 @@ class MyContainer extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Icon(
-                    Icons.favorite,
-                    size: 45.0,
-                    color: Colors.grey,
+                  IconButton(
+                    icon: Icon(
+                      Icons.favorite,
+                      size: 45.0,
+                      color: isFavorite ? Colors.pink : Colors.grey,
+                    ),
+                    onPressed: () {
+                      if (isFavorite == false) {
+                        setState(() {
+                          isFavorite = true;
+                        });
+                      } else {
+                        setState(() {
+                          isFavorite = false;
+                        });
+                      }
+                    },
                   ),
                 ],
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 40.0),
                 child: Text(
-                  title,
+                  widget.title,
                   style: GoogleFonts.montserrat(
                     textStyle: TextStyle(
                       color: Colors.white,
@@ -92,7 +111,7 @@ class MyContainer extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 20.0),
                 child: Text(
-                  '1h 30mins             $releaseDate',
+                  '1h 30mins             ${widget.releaseDate}',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14.0,

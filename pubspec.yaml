@@ -15,6 +15,8 @@ dependencies:
   flutter_svg: ^0.19.1
   google_fonts: ^1.1.1
   http: ^0.12.2
+  swipedetector: ^1.2.0
+  animations: ^1.1.2
 
 dev_dependencies:
   flutter_test:

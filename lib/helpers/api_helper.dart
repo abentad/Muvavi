@@ -19,6 +19,15 @@ class ApiHelper {
     var items = jsonData['results'];
 
     //
+    // List<int> _getGenres(var item) {
+    //   var genres = jsonData['results[' + item + '].genre_ids'];
+    //   List<int> movieGenre = [];
+    //   for (var genre in genres) {
+    //     movieGenre.add(genre);
+    //   }
+    //   return movieGenre;
+    // }
+
     for (var u in items) {
       Movie movie = Movie(
         title: u['original_title'],
@@ -27,6 +36,7 @@ class ApiHelper {
         id: u['id'],
         voteAverage: u['vote_average'].toString(),
         releaseDate: u['release_date'],
+        // genres: _getGenres(u),
       );
 
       // setState(() {
@@ -49,26 +59,3 @@ class ApiHelper {
     return movies;
   }
 }
-
-//
-//
-// Genres
-// Action          28
-// Adventure       12
-// Animation       16
-// Comedy          35
-// Crime           80
-// Documentary     99
-// Drama           18
-// Family          10751
-// Fantasy         14
-// History         36
-// Horror          27
-// Music           10402
-// Mystery         9648
-// Romance         10749
-// Science Fiction 878
-// TV Movie        10770
-// Thriller        53
-// War             10752
-// Western         37

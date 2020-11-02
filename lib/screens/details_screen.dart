@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:swipedetector/swipedetector.dart';
 
 class DetailsScreen extends StatefulWidget {
   final String imagePath;
@@ -24,6 +25,8 @@ class DetailsScreen extends StatefulWidget {
 class _DetailsScreenState extends State<DetailsScreen> {
   final String posterBaseUrl = 'https://image.tmdb.org/t/p/w500';
 
+  int id = 1;
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -45,93 +48,98 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     fit: BoxFit.fill,
                   ),
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.black12.withOpacity(0.2),
-                        Colors.black12.withOpacity(0.2),
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+                child: SwipeDetector(
+                  onSwipeDown: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black12.withOpacity(0.2),
+                          Colors.black12.withOpacity(0.2),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10.0),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.white,
-                                size: 35.0,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 10.0),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.arrow_back_ios,
+                                  color: Colors.white,
+                                  size: 35.0,
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
                               ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                            SizedBox(width: 15.0),
-                            Container(
-                              height: 40.0,
-                              width: 40.0,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(50.0),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  widget.voteAverage,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18.0,
+                              SizedBox(width: 15.0),
+                              Container(
+                                height: 40.0,
+                                width: 40.0,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(50.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    widget.voteAverage,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Spacer(),
-                            Icon(
-                              Icons.favorite,
-                              size: 40.0,
-                              color: Colors.grey,
-                            ),
-                          ],
+                              Spacer(),
+                              Icon(
+                                Icons.favorite,
+                                size: 40.0,
+                                color: Colors.grey,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Spacer(),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.title,
-                              style: GoogleFonts.montserrat(
-                                textStyle: TextStyle(
-                                  fontSize: 30.0,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                        Spacer(),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.title,
+                                style: GoogleFonts.montserrat(
+                                  textStyle: TextStyle(
+                                    fontSize: 30.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Text(
-                              widget.releaseDate,
-                              style: GoogleFonts.montserrat(
-                                textStyle: TextStyle(
-                                  fontSize: 15.0,
-                                  color: Colors.white.withOpacity(0.7),
-                                  fontWeight: FontWeight.w400,
+                              Text(
+                                widget.releaseDate,
+                                style: GoogleFonts.montserrat(
+                                  textStyle: TextStyle(
+                                    fontSize: 15.0,
+                                    color: Colors.white.withOpacity(0.7),
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -191,3 +199,28 @@ class _DetailsScreenState extends State<DetailsScreen> {
     );
   }
 }
+
+// SwipeDetector(
+//     child: ... //You Widget Tree here
+//     ),
+//     onSwipeUp: () {
+//         setState(() {
+//             _swipeDirection = "Swipe Up";
+//         });
+//     },
+//     onSwipeDown: () {
+//         setState(() {
+//             _swipeDirection = "Swipe Down";
+//         });
+//     },
+//     onSwipeLeft: () {
+//       setState(() {
+//         _swipeDirection = "Swipe Left";
+//       });
+//     },
+//     onSwipeRight: () {
+//       setState(() {
+//         _swipeDirection = "Swipe Right";
+//       });
+//     },
+// )

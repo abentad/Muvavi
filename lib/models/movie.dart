@@ -5,12 +5,15 @@ class Movie {
   final int id;
   final String voteAverage;
   final String releaseDate;
+  // final List<int> genres;
 
-  Movie(
-      {this.title,
-      this.overview,
-      this.posterImage,
-      this.id,
-      this.voteAverage,
-      this.releaseDate});
+  Movie({
+    this.title,
+    this.overview,
+    this.posterImage,
+    this.id,
+    this.voteAverage,
+    this.releaseDate,
+    // this.genres,
+  });
 }
