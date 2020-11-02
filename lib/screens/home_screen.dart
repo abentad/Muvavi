@@ -36,7 +36,9 @@ class _HomeScreenState extends State<HomeScreen> {
         posterImage: u['poster_path'],
         id: u['id'],
       );
-      movies.add(movie);
+      setState(() {
+        movies.add(movie);
+      });
     }
 
     //
@@ -54,6 +56,37 @@ class _HomeScreenState extends State<HomeScreen> {
     return movies;
   }
 
+  _buildTitle() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 10.0, bottom: 5.0),
+          child: Text(
+            'Muvavi',
+            style: TextStyle(
+              fontSize: 40.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 10.0, bottom: 30.0),
+          child: Row(
+            children: [
+              Text("Powered By "),
+              SizedBox(width: 10.0),
+              // SvgPicture.asset(
+              //   'assets/images/tmdb.svg',
+              //   height: 20,
+              // ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   _loadMoreMovies() async {
     _isLoading = true;
     print('loadig more movies....');
@@ -61,28 +94,27 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       page = (int.parse(page) + 1).toString();
     });
-    //
+    //new movies list
     List<Movie> moreMovies = await _getMovies((int.parse(page) + 1).toString());
     //
-    setState(() {
-      page = (int.parse(page) + 1).toString();
-    });
+    // setState(() {
+    //   page = (int.parse(page) + 1).toString();
+    // });
     print('done');
     // List<Movie> allMovies = movies..addAll(moreMovies);
-    setState(() {
-      movies.followedBy(moreMovies);
-    });
+    // setState(() {
+    movies.followedBy(moreMovies);
+    // });
+
     print('loading done.');
+    // moreMovies.clear();
+    // print('moreMovies cleared');
+
     // print(movies);
     _isLoading = false;
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  _buildUi(AsyncSnapshot snapshot, int index) {
+  _buildUi(List<Movie> movieList, int index) {
     return Container(
       margin: EdgeInsets.all(10.0),
       height: MediaQuery.of(context).size.height / 4,
@@ -108,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Image(
             fit: BoxFit.cover,
             image: NetworkImage(
-              posterBaseUrl + snapshot.data[index].posterImage,
+              posterBaseUrl + movieList[index].posterImage,
             ),
           ),
           SizedBox(width: 20.0),
@@ -118,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 SizedBox(height: 5.0),
                 Text(
-                  snapshot.data[index].title,
+                  movieList[index].title,
                   overflow: TextOverflow.clip,
                   style: TextStyle(
                     fontSize: 24.0,
@@ -126,14 +158,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 SizedBox(height: 20.0),
-                Text(
-                  snapshot.data[index].overview.toString().length > 100
-                      ? snapshot.data[index].overview
-                              .toString()
-                              .substring(0, 100) +
-                          '...'
-                      : snapshot.data[index].overview,
-                  overflow: TextOverflow.clip,
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Text(
+                      movieList[index].overview.toString().length > 100
+                          ? movieList[index]
+                                  .overview
+                                  .toString()
+                                  .substring(0, 100) +
+                              '...'
+                          : movieList[index].overview,
+                      overflow: TextOverflow.clip,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -144,20 +182,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _getMovies(page);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: FutureBuilder(
-          future: _getMovies('1'),
-          builder: (context, snapshot) {
-            if (snapshot.data == null) {
-              return Container(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            } else {
-              return NotificationListener<ScrollNotification>(
+        child: movies.length == 0
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : NotificationListener<ScrollNotification>(
                 onNotification: (ScrollNotification scrollDetails) {
                   if (!_isLoading &&
                       scrollDetails.metrics.pixels ==
@@ -168,45 +206,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 child: ListView.builder(
                   physics: BouncingScrollPhysics(),
-                  itemCount: snapshot.data.length,
+                  itemCount: movies.length + 1,
                   itemBuilder: (context, index) {
                     if (index == 0) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 10.0, bottom: 5.0),
-                            child: Text(
-                              'Muvavi',
-                              style: TextStyle(
-                                fontSize: 40.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 10.0, bottom: 30.0),
-                            child: Row(
-                              children: [
-                                Text("Powered By "),
-                                SizedBox(width: 10.0),
-                                // SvgPicture.asset(
-                                //   'assets/images/tmdb.svg',
-                                //   height: 20,
-                                // ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      );
+                      return _buildTitle();
+                    } else {
+                      return _buildUi(movies, index - 1);
                     }
-                    return _buildUi(snapshot, index - 1);
                   },
                 ),
-              );
-            }
-          },
-        ),
+              ),
       ),
     );
   }
