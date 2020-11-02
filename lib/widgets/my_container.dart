@@ -100,7 +100,7 @@ class _MyContainerState extends State<MyContainer> {
                   style: GoogleFonts.montserrat(
                     textStyle: TextStyle(
                       color: Colors.white,
-                      fontSize: 35.0,
+                      fontSize: widget.title.length > 50 ? 28.0 : 35.0,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
                     ),

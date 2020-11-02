@@ -46,14 +46,18 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
     print(casts.length);
     print('got all casts');
-    casts.addAll(movieCasts);
+    setState(() {
+      casts.addAll(movieCasts);
+    });
     print('added all casts');
     print(casts.length);
   }
 
   @override
   Widget build(BuildContext context) {
+    //
     final size = MediaQuery.of(context).size;
+    //
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -170,17 +174,19 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 ),
               ),
               Container(
-                height: size.height / 4,
+                height: widget.overView.length > 180
+                    ? size.height / 2
+                    : size.height / 4,
                 width: size.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                 ),
-                child: Padding(
-                  padding: EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 20.0, top: 20.0),
+                      child: Text(
                         'Synopsis',
                         style: GoogleFonts.montserrat(
                           textStyle: TextStyle(
@@ -189,25 +195,25 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 16.0),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Text(
-                            widget.overView,
-                            style: GoogleFonts.montserrat(
-                              textStyle: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w500,
-                                height: 1.8,
-                              ),
+                    ),
+                    SizedBox(height: 16.0),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: SingleChildScrollView(
+                        child: Text(
+                          widget.overView,
+                          style: GoogleFonts.montserrat(
+                            textStyle: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w500,
+                              height: 1.8,
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               Padding(
@@ -224,7 +230,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
               ),
               SizedBox(height: 10.0),
               casts == null
-                  ? CircularProgressIndicator()
+                  ? Center(child: CircularProgressIndicator())
                   : Container(
                       height: 200,
                       width: double.infinity,
@@ -233,11 +239,17 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         scrollDirection: Axis.horizontal,
                         itemCount: casts.length,
                         itemBuilder: (context, index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(posterBaseUrl +
-                                    casts[index].profileImgPath),
+                          return Padding(
+                            padding: EdgeInsets.only(left: 20.0),
+                            child: Container(
+                              height: 200,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                    posterBaseUrl + casts[index].profileImgPath,
+                                  ),
+                                ),
                               ),
                             ),
                           );
